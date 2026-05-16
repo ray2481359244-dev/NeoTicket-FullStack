@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NeoTicket 售后控制台</title>
+    <style>
+        /* ==========================================
+           1. 全局样式：定义基础肤色与字体
+           ========================================== */
+        :root {
+            --bg-color: #0f172a;       /* 深沉的夜蓝色背景，比纯黑更有质感 */
+            --card-bg: #1e293b;        /* 卡片稍微浅一点，拉开层次 */
+            --text-primary: #f1f5f9;   /* 近乎纯白的主文字 */
+            --text-secondary: #94a3b8; /* 灰白色的副文字 */
+            --accent-color: #38bdf8;   /* 核心高亮：极客蓝/赛博蓝 */
+            --accent-hover: #0ea5e9;   /* 悬浮时的深蓝色 */
+            --border-color: #334155;   /* 边框颜色，保持低调 */
+            --success-color: #4ade80;  /* 成功状态的绿色 */
+            
+            /* 字体：优先使用整洁的无衬线字体，带有理工感 */
+            --font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        }
+
+        * {
+            box-sizing: border-box; /* 软件工程规范：所有元素盒模型统一 */
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-primary);
+            font-family: var(--font-family);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh; /* 让内容始终居中 */
+            padding: 20px;
+        }
+
+        /* ==========================================
+           2. 退票卡片：主容器设计
+           ========================================== */
+        .ticket-card {
+            background-color: var(--card-bg);
+            width: 100%;
+            max-width: 450px; /* 限制最大宽度，防止拉伸 */
+            padding: 40px;
+            border-radius: 16px; /* 现代感的圆角 */
+            border: 1px solid var(--border-color); /* 淡淡的边框，增加精致感 */
+            
+            /* 关键：增加一个基于高亮色的微弱阴影，制造“通电”的发光感 */
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3), 
+                        0 4px 6px -4px rgba(0, 0, 0, 0.2),
+                        0 0 15px 0px rgba(56, 189, 248, 0.1); 
+            
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        /* 增加一个微小的鼠标悬浮悬停动画，增加交互感 */
+        .ticket-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.4), 
+                        0 0 20px 2px rgba(56, 189, 248, 0.2); 
+        }
+
+        /* ==========================================
+           3. 文本与标题：极客感排版
+           ========================================== */
+        .ticket-card h2 {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--accent-color); /* 标题使用极客蓝 */
+            margin-bottom: 10px;
+            letter-spacing: -0.5px; /* 紧凑的字距，更有现代感 */
+        }
+
+        .ticket-card .subtitle {
+            color: var(--text-secondary);
+            font-size: 15px;
+            margin-bottom: 35px;
+            line-height: 1.6;
+        }
+
+        /* ==========================================
+           4. 表单元素：输入框与标签
+           ========================================== */
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-group label {
+            display: block;
+            color: var(--text-primary);
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 8px;
+            letter-spacing: 0.5px;
+        }
+
+        .form-group input {
+            width: 100%;
+            background-color: rgba(15, 23, 42, 0.5); /* 半透明背景 */
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+            padding: 12px 16px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-family: inherit;
+            
+            /* 关键：去除默认的蓝色高亮，改为我们自己的赛博蓝 */
+            outline: none;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        /* 输入框获取焦点时的状态：边框变亮，增加发光 */
+        .form-group input:focus {
+            border-color: var(--accent-color);
+            box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.2);
+        }
+
+        /* 让 placeholder（占位符）颜色低调一点 */
+        .form-group input::placeholder {
+            color: #475569;
+        }
+
+        /* ==========================================
+           5. 按钮设计：核心操作
+           ========================================== */
+        #refundBtn {
+            width: 100%;
+            background-color: var(--accent-color);
+            color: #000; /* 蓝色背景上使用黑色文字，对比更强烈 */
+            border: none;
+            padding: 14px;
+            font-size: 16px;
+            font-weight: 600;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.2s ease, transform 0.1s ease;
+            
+            /* 字体也稍微带一点间距，更有力量 */
+            letter-spacing: 1px;
+            text-transform: uppercase; /* 文字全大写，更有指令感 */
+        }
+
+        #refundBtn:hover {
+            background-color: var(--accent-hover);
+        }
+
+        /* 点击时的缩反馈，模拟物理按钮 */
+        #refundBtn:active {
+            transform: scale(0.98);
+        }
+
+        /* ==========================================
+           6. 状态区域：模拟反馈
+           ========================================== */
+        .status-area {
+            margin-top: 25px;
+            padding: 15px;
+            border-radius: 8px;
+            background-color: rgba(0,0,0,0.2);
+            border: 1px dashed var(--border-color);
+            text-align: center;
+            min-height: 50px;
+            color: var(--text-secondary);
+            font-size: 14px;
+            font-family: 'Courier New', Courier, monospace; /* 使用等宽字体，模拟终端输出 */
+        }
+        
+        .status-area.success {
+            color: var(--success-color);
+            border-color: var(--success-color);
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="ticket-card">
+        <h2>NEO // TICKET</h2>
+        <p class="subtitle">售后控制台 &gt; 正在办理 [退票/退盟] 逻辑处理。此操作将触发底层数据库事务 (ACID)。</p>
+        
+        <div class="form-group">
+            <label for="orderId">REQUEST_ID // 订单编号：</label>
+            <input type="number" id="orderId" placeholder="例如: 1">
+        </div>
+        
+        <div class="form-group">
+            <label for="ticketId">TARGET_TICKET // 门票编号：</label>
+            <input type="number" id="ticketId" placeholder="例如: 1">
+        </div>
+        
+        <button id="refundBtn">执行事务 (EXECUTE_TRANSACTION)</button>
+        
+        <div class="status-area" id="statusMessage">
+            // 等待指令 (Awaiting commands)...
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('refundBtn').addEventListener('click', async () => {
+            const orderId = document.getElementById('orderId').value;
+            const ticketId = document.getElementById('ticketId').value;
+            const statusMessage = document.getElementById('statusMessage');
+
+            // 基础表单验证
+            if (!orderId || !ticketId) {
+                statusMessage.innerHTML = "❌ // 错误: 请输入完整的订单和门票编号。";
+                statusMessage.className = "status-area";
+                return;
+            }
+
+            statusMessage.innerHTML = "// 正在向后端下发事务指令 (CONNECTING)...";
+
+            try {
+                // 🚀 核心：通过网络将数据异步发送给你的 Flask 服务器
+                const response = await fetch('http://127.0.0.1:5000/api/refund', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        order_id: parseInt(orderId),
+                        ticket_id: parseInt(ticketId)
+                    })
+                });
+
+                const result = await response.json();
+
+                // 渲染后端的反馈结果
+                if (result.code === 200) {
+                    statusMessage.innerHTML = `✅ // SYSTEM_SUCCESS <br> ${result.message}`;
+                    statusMessage.className = "status-area success";
+                } else {
+                    statusMessage.innerHTML = `❌ // TRANSACTION_REFUSED <br> ${result.message}`;
+                    statusMessage.className = "status-area";
+                }
+
+            } catch (error) {
+                statusMessage.innerHTML = `❌ // CRITICAL_ERROR: 无法连接到 Python 后端服务。`;
+                statusMessage.className = "status-area";
+            }
+        });
+    </script>
+
+</body>
+</html>
